@@ -61,9 +61,9 @@ public class RcdtcsSampleSoloMeshComponent : MonoBehaviour {
 	private DbgRenderMesh m_DbgRenderMesh = new DbgRenderMesh();
 	private DbgRenderMesh m_DbgPathRenderer = new DbgRenderMesh();
 
-	//Path finding test picking positions
-	private Vector3 m_StartPos = Vector3.zero;
-	private Vector3 m_EndPos = Vector3.zero;
+	//Path finding test picking positions, Changed to public for testing
+	[HideInInspector] public Vector3 m_StartPos = Vector3.zero;
+	[HideInInspector] public Vector3 m_EndPos = Vector3.zero;
 
 	public void Start(){
 
@@ -129,6 +129,7 @@ public class RcdtcsSampleSoloMeshComponent : MonoBehaviour {
 			m_System.ComputeSystem();
 			OnComputeComplete();
 		}
+
     }
 
     public void UpdateLog() {
@@ -232,10 +233,10 @@ public class RcdtcsSampleSoloMeshComponent : MonoBehaviour {
 			if (Physics.Raycast (ray.origin, ray.direction, out hit, 1000.0f)) {
 				if (altClick){
 					m_EndPos = hit.point;
-					//Debug.Log ("Set End Point " + hit.point);
+					Debug.Log ("Set End Point " + hit.point);
 				}else if (mainClick){
 					m_StartPos = hit.point;
-					//Debug.Log ("Set Start Point " + hit.point);
+					Debug.Log ("Set Start Point " + hit.point);
 				}
                 RecomputePath();
 			}
@@ -245,13 +246,14 @@ public class RcdtcsSampleSoloMeshComponent : MonoBehaviour {
         }
 	}
 
-	private void RecomputePath(){
+	// changed to public for testing
+	public void RecomputePath(){
 		if (m_EndPos != Vector3.zero && m_StartPos != Vector3.zero){
             m_DbgPathRenderer.Clear();
             m_ComputedPathType = m_PathType;
 			if (m_PathType == PathType.Smooth){
                 m_SmoothPath = RcdtcsUnityUtils.ComputeSmoothPath(m_System.m_navQuery, m_StartPos, m_EndPos);
-                m_DbgPathRenderer.AddPath(m_SmoothPath.m_smoothPath, m_SmoothPath.m_nsmoothPath, 1.25f, Color.black, Color.white);
+				m_DbgPathRenderer.AddPath(m_SmoothPath.m_smoothPath, m_SmoothPath.m_nsmoothPath, 1.25f, Color.black, Color.white);
 			}else if (m_PathType == PathType.Straight){
                 m_StraightPath = RcdtcsUnityUtils.ComputeStraightPath(m_System.m_navQuery, m_StartPos, m_EndPos);
 				m_DbgPathRenderer.AddPath(m_StraightPath.m_straightPath, m_StraightPath.m_straightPathCount, 1.25f, Color.black, Color.white);
